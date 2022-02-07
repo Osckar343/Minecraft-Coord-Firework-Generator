@@ -1,0 +1,14 @@
+.trail {
+    outline: 3px solid black;
+    outline-offset: -4px;
+}
+
+.flicker {
+    outline: 3px dashed black;
+    outline-offset: -4px;
+}
+
+.trail-flicker {
+    outline: 7px double black;
+    outline-offset: -5px;
+}

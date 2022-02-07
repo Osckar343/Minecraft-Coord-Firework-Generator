@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command </title>
+    <link rel="stylesheet" href="css/td.css">
+    <link rel="stylesheet" href="css/event.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    
+</head>
+
+
+<body>
+    <div id="content">
+        <div id="commands">
+            <div id="command-input-box">
+                <input id="command-input" type="text" name="command" placeholder="Firework Command">
+            </div>
+            
+            <div id="paints">
+            </div>
+
+            <div id="info">
+                <div class="info-square">Current Axe: <div><img id="currentAxe" src="img/axes/2.png" width="500" style="border-radius: 15px;">
+                    <select id="select-axe" name="axe">
+                        <option value="grid-axe-2" selected>Straight</option>
+                        <option value="grid-axe-3">Back</option>
+                        <option value="grid-axe-0">Right</option>
+                        <option value="grid-axe-1">Left</option>
+                      </select></div>
+                </div>
+                <div class="info-square">Coords: <div id="coords"></div></div>
+                <div class="info-square">Commands: <div id="amountOfCommands"></div></div>
+                <div class="info-square" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">---------------------</div>
+                <div class="info-square"><input type="text" id="text-val" placeholder="filename.mcfunction"/></div>
+                <div class="info-square"><input type="button" id="dwn-btn" value="Generate File"/></div>
+            </div>
+            
+        </div>
+
+        <div id="grid">
+        </div>
+
+    </div>
+
+
+    
+
+</body>
+    <script src="js/axes.js"></script>
+    <script src="js/events.js"></script>
+    <script>
+        let arrayCommands = [];
+
+        printCoords(0, -93, 53, 64); //Right axe GOOD
+        printCoords(1, -93, 129, 64); //Left Axe GOOD
+        printCoords(2, 53, -169, 64); //Straight Axe GOOD
+        printCoords(3, 53, -93, 64); //Back Axe GOOD
+
+        let gridsArray = document.getElementsByTagName('table');
+        for (let i = 0; i < gridsArray.length; i++) 
+                gridsArray[i].style='display: none';
+        
+        gridsArray[2].removeAttribute('style');
+
+        /*Adding events to all squares of grid*/
+        var coordEvents = document.getElementsByTagName("td");
+
+        for (let i = 0; i < coordEvents.length; i++) {
+            coordEvents[i].addEventListener("click", printPaint, false);
+            coordEvents[i].addEventListener("mouseenter", printCoordsEvents, false);
+        }
+
+
+        //printCoords(0, -93, 53, 64); //Right axe GOOD
+        //printCoords(1, -93, 129, 64); //Left Axe GOOD
+        //printCoords(2, 53, -169, 64); //Straight Axe GOOD
+        //printCoords(3, 53, -93, 64); //Back Axe GOOD
+    </script>
+</html>
