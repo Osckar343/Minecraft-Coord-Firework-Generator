@@ -6,12 +6,57 @@
         //printCoords(2, 53, -169, 64); //Straight Axe GOOD
         //printCoords(3, 53, -93, 64); //Back Axe GOOD
 
+function addStructures(axe, x, y){
+   
+}
+
+function defineCoord(axe, x, y, z, coordHorizontalBase, coordVerticalBase) {
+
+    let grid = '';
+    if(axe === 0)  {
+        if(((x == 146  || x == 150 || x == 116 || x == 112 ) && (y >= 64 &&  y <= 67))  || ((x == 138  || x == 124) && (y >= 64 &&  y <= 69))) //screen
+            grid += `<td class="screenStructure">${(Math.abs(x) * -1) - 1} ${y} ${z}</td>`;
+        else if((x === Math.abs(coordHorizontalBase) || x === Math.abs(coordHorizontalBase) + 76 ) && (y >= 68 && y <= 87))
+            grid += `<td class="structureBehind">${(Math.abs(x) * -1) - 1} ${y} ${z}</td>`;
+        else 
+            grid += `<td>${(Math.abs(x) * -1) - 1} ${y} ${z}</td>`;
+    }     
+    else if(axe === 1) {
+        if(((x == 116  || x == 146) && (y >= 64 &&  y <= 67)) || ((x >= 116  && x <= 146) && y === 67) ) //screen
+            grid += `<td class="screenStructure">${(Math.abs(x) * -1) - 1} ${y} ${z}</td>`;
+        else if((x === Math.abs(coordHorizontalBase) || x === Math.abs(coordHorizontalBase) + 76 ) && (y >= 68 && y <= 87))
+            grid += `<td class="structureBehind">${(Math.abs(x) * -1) - 1} ${y} ${z}</td>`;
+        else 
+            grid += `<td>${(Math.abs(x) * -1) - 1} ${y} ${z}</td>`;
+    } 
+    else if(axe === 2) {
+        if((x >= 84  && x <= 98) && (y >= 64 &&  y <= 69)) //screen
+            grid +=  `<td class="screenStructure">${z - 1} ${y} ${Math.abs(x)}</td>`;
+        else if((x === Math.abs(coordHorizontalBase) || x === Math.abs(coordHorizontalBase) + 76 ) && (y >= 68 && y <= 87))
+            grid += `<td class="structureBehind">${z - 1} ${y} ${Math.abs(x)}</td>`;
+        else 
+            grid += `<td>${z - 1} ${y} ${Math.abs(x)}</td>`;
+    }
+    else if(axe === 3) {
+        if(((x == 80  || x == 102) && (y >= 64 &&  y <= 67)) || (x >= 89  && x <= 93) && (y >= 64 &&  y <= 68) ||  (x >= 90  && x <= 92) && (y >= 68 &&  y <= 71) || ((x === 88 || x === 94)  &&  y == 68) || ((x === 89 || x === 93)  &&  y == 70) || (x === 91  &&  y == 72)) //screen
+            grid += `<td class="screenStructure">${z - 1} ${y} ${Math.abs(x)}</td>`;
+        else if((x === Math.abs(coordHorizontalBase) || x === Math.abs(coordHorizontalBase) + 76 ) && (y >= 68 && y <= 87))
+            grid += `<td class="structureBehind">${z - 1} ${y} ${Math.abs(x)}</td>`;
+        else 
+            grid += `<td>${z - 1} ${y} ${Math.abs(x)}</td>`;
+    }
+
+    return grid;
+        
+}
+
+
 function printCoords(axe, coordHorizontalBase, coordApplicateBase, coordVerticalBase) {
 
     const divisor = 9;
     const distanceX = 3;
     const gridLimitX = 27 * distanceX;
-    const gridLimitY = 45;
+    const gridLimitY = 30;
     let referenceDivisor = 0;
     let grid = "";
     let z = coordApplicateBase;
@@ -24,14 +69,7 @@ function printCoords(axe, coordHorizontalBase, coordApplicateBase, coordVertical
         z = coordApplicateBase;
         grid += "<tr>"
         for (let x = Math.abs(coordHorizontalBase); x < gridLimitX +  Math.abs(coordHorizontalBase) - 1; x++) {
-            if(axe === 0)
-                grid += `<td>${(Math.abs(x) * -1) - 1} ${y} ${z}</td>`;
-            else if(axe === 1)
-                grid += `<td>${(Math.abs(x) * -1) - 1} ${y} ${z}</td>`;
-            else if(axe === 2)
-                grid += `<td>${z - 1} ${y} ${Math.abs(x)}</td>`;
-            else if(axe === 3)
-                grid += `<td>${z - 1} ${y} ${Math.abs(x)}</td>`;
+            grid += defineCoord(axe, x, y, z, coordHorizontalBase, coordVerticalBase);
 
             /* X axe */
             if(x == Math.abs(coordHorizontalBase)) {
@@ -85,3 +123,4 @@ function printCoords(axe, coordHorizontalBase, coordApplicateBase, coordVertical
         });
     }
 }
+

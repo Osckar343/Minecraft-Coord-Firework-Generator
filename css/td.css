@@ -111,6 +111,15 @@ td:nth-child(-n+9) {
 }
 
 
+.structureBehind {
+    background-color: #616161;
+}
+.screenStructure {
+    background-color: rgb(255, 94, 0);
+}
+
+
+
 tr {
     background-color: #949494;
 }
@@ -128,3 +137,4 @@ tr:nth-last-child(4) {
 td:hover {
  background-color: orange;
 }
+
