@@ -111,6 +111,7 @@
                         <div id = "color-result" style="background-color: white;">air,air,air</div>
                         <div class="info-square"><input onclick="createNewPaintSelectable()" type="button" id="dwn-btn" value="Generate Light"/></div>
                     </div>      
+
                 </div>
 
                 <div id="colors">
@@ -137,26 +138,35 @@
 
                 </div>
 
+                
+                <div id="frame-default-duration">
+                    <label for="default-duration">Default Duration:</label>
+                    <input style ="width: 3em;" type="number" id="default-duration" name="default-duration" min="1" max="1000" value="2">
+                </div>
+
                 <div id="player-frames">
                     <div id="select-frames">
                         <label for="frames">Frame:</label>
                         <select name="frames" id="frames-select" onchange="if (this.selectedIndex) updateFrame();">
-                            <option value="-1">--</option>
-                            <option value="1">1</option>
+                            <option hidden value="-1">--</option>
+                            <option selected value="1">1</option>
                         </select>
                     </div>
-                    
-                    
 
+                    <div id="frame-duration">
+                        <label for="duration">Frame Duration:</label>
+                        <input onchange="changeFrameDuration()" style ="width: 3em;" type="number" id="duration" name="duration" min="1" max="1000" value="2">
+                    </div>
+                    
                     <div class="container-flex">
+                    
                         <div id="add-frame-button" onclick="addFrame()">+</div>
+                        <div id="player-frame-button" onclick="framePlayer()">❚❚</div>
                         <div id="delete-frame-button" onclick="deleteFrame()">-</div>
                     </div>
                 </div>
     
                 <div id="info">
-                    <div class="info-square">Frame: <div id="currentFrame">1</div> / <div id="amountOfFrames"></div></div>
-                    <div class="info-square">Coords: <div id="coords"></div></div>
                     <div class="info-square">Commands: <div id="amountOfCommands"></div></div>
                     <div class="info-square" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">---------------------</div>
                     <div class="info-square"><input type="text" id="text-val" placeholder="filename.mcfunction"/></div>
@@ -170,5 +180,7 @@
     
 
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.3.1/jquery.min.js">
+</script>
 <script src="js/event-light.js"></script>
 </html>

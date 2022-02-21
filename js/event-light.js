@@ -1,7 +1,8 @@
 let arrayFrames = [];
 
 let commandsObj = {
-    frame: currentFrame,
+    frame: 0,
+    duration: null,
     info: []
 }
 
@@ -180,8 +181,8 @@ function createNewPaintSelectable() {
 
     paintsObject.innerHTML += `
     <div class="individual-painting">
-        <input type="radio" id="${paintings.length + 1}" name="paint" value="${result.innerHTML}" checked>
-        <label for="${paintings.length + 1}"><div style="${style}" class="square-paintings"></div></label>
+        <input type="radio" id="p${paintings.length + 1}" name="paint" value="${result.innerHTML}" checked>
+        <label for="p${paintings.length + 1}"><div style="${style}" class="square-paintings"></div></label>
     </div>
     `;
 }
@@ -194,17 +195,10 @@ function selectCoord(event) {
 
     const coords = selectedObj.innerText;
 
-    let currentFrameObj = document.getElementById('currentFrame');
     let amountOfFramesObj = document.getElementById('amountOfFrames');
 
     let amountOfFrames = arrayFrames.length;
-    let currentFrame = currentFrameObj.innerText;
-
-
-    console.log(selectedObj);
-    console.log(resultObj);
-
- 
+    let currentFrame = document.getElementById('frames-select').value;
 
     if(selectedObj.getAttribute("style")) { 
 
@@ -234,7 +228,7 @@ function selectCoord(event) {
                 let infoObj = {
                     coords: coords,
                     style: styleObj,
-                    blocks: blocks.split(',')
+                    blocks: blocks.split(','),
                 }
 
                 arrayFrames[currentFrame - 1].info.push(infoObj) //Save a new light with its coords
@@ -248,22 +242,46 @@ function selectCoord(event) {
 
 function addFrame() {
     console.log('CLICK ON ADD FRAME');
+    let currentFrame = document.getElementById('frames-select').value;
+
+    let theFrameBefore = arrayFrames[currentFrame - 1];
+    let newInfo = theFrameBefore.info.slice(
+
+    );
     let commandsObj = {
-        frame: currentFrame,
-        info: []
+        frame: theFrameBefore.frame + 1,
+        duration: null,
+        info: newInfo
     }
 
+    console.log(commandsObj);
     arrayFrames.push(commandsObj);
+
     updateSelectableFrames();
+    let selectFrameObj = document.getElementById('frames-select');
+    selectFrameObj.value = arrayFrames.length;
+
+    printer(arrayFrames.length);
 }
 
-function deleteFrame() {
-    console.log('CLICK ON DELETE FRAME');
-    let currentFrame = document.getElementById('currentFrame').innerText;
-
-    console.log(currentFrame);
-    arrayFrames.splice(currentFrame - 1, 1);
-    updateSelectableFrames();
+async function deleteFrame() {
+    if(arrayFrames.length !== 1) {
+        let currentFrame = document.getElementById('frames-select').value;
+    
+        arrayFrames.splice(currentFrame - 1, 1);
+        await updateSelectableFrames();
+        let selectFrameObj = document.getElementById('frames-select');
+    
+        if(currentFrame === '1') {
+            selectFrameObj.value = currentFrame;
+            printer(currentFrame);
+        } else {
+            selectFrameObj.value = currentFrame - 1;
+            printer(currentFrame - 1);
+        }
+            
+        
+    } 
 }
 
 
@@ -271,7 +289,7 @@ function updateSelectableFrames() {
     let selectHTML = '';
     selectHTML += '<label for="frames">Frame:</label>';
     selectHTML += '<select name="frames" id="frames-select" onchange="if (this.selectedIndex) updateFrame();">';
-    selectHTML += `<option value="-1">---</option>`
+    selectHTML += `<option hidden value="-1">---</option>`
 
     for (let i = 0; i < arrayFrames.length; i++) 
         selectHTML += `<option value="${i + 1}">${i + 1}</option>`
@@ -283,6 +301,9 @@ function updateSelectableFrames() {
 function printer(currentFrame) {
     let arrayCoordsObj = document.getElementsByClassName('coordSelectable');
     let arrayInfoCoords = [];
+
+    let frameDurationObj = document.getElementById('duration');
+    frameDurationObj.value = getTicks(currentFrame - 1);
 
     for (let i = 0; i < arrayFrames[currentFrame - 1].info.length; i++) 
         arrayInfoCoords.push(arrayFrames[currentFrame - 1].info[i]);
@@ -298,9 +319,92 @@ function printer(currentFrame) {
 
 function updateFrame(event) {
     let e = document.getElementById("frames-select");
-    let currentFrame = document.getElementById('currentFrame').innerText = e.value;
+    let currentFrame = document.getElementById('frames-select').value;
     printer(currentFrame);
 }
+
+function changeFrameDuration() {
+    let currentFrame = document.getElementById('frames-select').value;
+    const durationSelected = document.getElementById('duration').value;
+
+    let newDuration;
+    if(durationSelected <= 0) {
+        newDuration = null;
+    } else {
+        newDuration = durationSelected;
+    }
+
+    arrayFrames[currentFrame - 1].duration = newDuration;
+    console.log(arrayFrames[currentFrame - 1]);
+}
+
+function framePlayer() {
+    let frameObj = document.getElementById('frames-select');
+    document.getElementById('frames-select').getElementsByTagName('option')[0].selected = 'selected';
+    frameObj.focus();
+
+    console.log(arrayFrames.length);
+
+    player();
+}
+
+const timer = ms => new Promise(res => setTimeout(res, ms))
+
+async function player () { // We need to wrap the loop into an async function for this to work
+    for (let i = 0; i < arrayFrames.length; i++) {
+        document.getElementById('frames-select').getElementsByTagName('option')[i + 1].selected = 'selected';
+        printer(i + 1);
+
+        let ticks = getTicks(i);
+        await timer(50 * ticks); // then the created Promise can be awaited
+    }
+}
+
+function getTicks(i) {
+    let ticks = 0;
+
+    if(!arrayFrames[i].duration) 
+        ticks = document.getElementById('default-duration').value;
+    else 
+        ticks = arrayFrames[i].duration;
+    
+    return ticks;
+}
+
+document.addEventListener('keydown', (event)=> {   
+    if(event.code === 'KeyA') {
+        document.getElementById('add-frame-button').click();
+    } else if(event.code === 'KeyD') {
+        document.getElementById('delete-frame-button').click();
+    }
+
+    let selectFrame = document.getElementById('frames-select');
+
+    
+    if(event.code === 'KeyS') {
+        selectFrame.focus();
+
+        var keyboardEvent = document.createEvent('KeyboardEvent');
+        var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? 'initKeyboardEvent' : 'initKeyEvent';
+
+        keyboardEvent[initMethod](
+        'keydown', // event type: keydown, keyup, keypress
+        true, // bubbles
+        true, // cancelable
+        window, // view: should be window
+        false, // ctrlKey
+        false, // altKey
+        false, // shiftKey
+        false, // metaKey
+        40, // keyCode: unsigned long - the virtual key code, else 0
+        0, // charCode: unsigned long - the Unicode character associated with the depressed key, else 0
+        );
+        document.dispatchEvent(keyboardEvent);
+        
+    } else if(event.code === 'KeyW') {
+        selectFrame.focus();
+    }
+});
 
 
 let coordSelectablesObj = document.getElementsByClassName('coordSelectable');

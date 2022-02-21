@@ -93,7 +93,7 @@
 }
 
 .container-flex {
-    width: 40%;
+    width: 60%;
     display: flex;
     margin: 0 auto;
     justify-content: space-between;
@@ -116,6 +116,7 @@ input[type=radio] {
     margin-left: 35%;
 }
 
+
 #player-frames {
     margin-top: 20px;
     border-radius: 15px;
@@ -130,8 +131,18 @@ input[type=radio] {
     text-align: center;
     height: 30px;
     width: 100px;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#frame-duration {
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+#frame-default-duration {
+    margin-top: 20px;
+    margin-bottom: -10px;
 }
 
 #commands{
