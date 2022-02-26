@@ -1,10 +1,13 @@
 let arrayFrames = [];
 
 let commandsObj = {
-    frame: 0,
     duration: null,
     info: []
 }
+
+var arrayCoordsObj = document.getElementsByClassName('coordSelectable');
+
+var isPlaying = false;
 
 arrayFrames.push(commandsObj);
 
@@ -232,34 +235,45 @@ function selectCoord(event) {
                 }
 
                 arrayFrames[currentFrame - 1].info.push(infoObj) //Save a new light with its coords
-                infoCommandObj.innerText = arrayFrames[currentFrame - 1].length;
                 console.log(arrayFrames[currentFrame - 1]);
             }
         }
     }
 }
 
+function insertAt(array, index, ...elementsArray) {
+    array.splice(index, 0, ...elementsArray);
+}
 
 function addFrame() {
     console.log('CLICK ON ADD FRAME');
     let currentFrame = document.getElementById('frames-select').value;
 
-    let theFrameBefore = arrayFrames[currentFrame - 1];
+    /*let theFrameBefore = arrayFrames[currentFrame - 1];
     let newInfo = theFrameBefore.info.slice(
 
     );
+    
     let commandsObj = {
         frame: theFrameBefore.frame + 1,
         duration: null,
         info: newInfo
+    }*/
+
+    commandsObj = {
+        duration: null,
+        info: []
     }
 
+    //1, 2, x, 3, 4
+
     console.log(commandsObj);
-    arrayFrames.push(commandsObj);
+    insertAt(arrayFrames, currentFrame, commandsObj); // [1,2,3,4,5,6,7,8]
+    //arrayFrames.push(commandsObj);
 
     updateSelectableFrames();
     let selectFrameObj = document.getElementById('frames-select');
-    selectFrameObj.value = arrayFrames.length;
+    selectFrameObj.value = parseInt(currentFrame) + 1;
 
     printer(arrayFrames.length);
 }
@@ -299,29 +313,50 @@ function updateSelectableFrames() {
 }
 
 function printer(currentFrame) {
-    let arrayCoordsObj = document.getElementsByClassName('coordSelectable');
-    let arrayInfoCoords = [];
 
     let frameDurationObj = document.getElementById('duration');
     frameDurationObj.value = getTicks(currentFrame - 1);
 
-    for (let i = 0; i < arrayFrames[currentFrame - 1].info.length; i++) 
-        arrayInfoCoords.push(arrayFrames[currentFrame - 1].info[i]);
-
-    for (let i = 0; i < arrayCoordsObj.length; i++) {
-        if (arrayInfoCoords.some(e => e.coords === arrayCoordsObj[i].innerText)) {
-            arrayCoordsObj[i].style = arrayInfoCoords[arrayInfoCoords.findIndex(e => e.coords === arrayCoordsObj[i].innerText)].style;
-        } else {
-            arrayCoordsObj[i].removeAttribute('style');
+    reStyleAllCoords();
+    
+    for (let i = 0; i < currentFrame; i++) {
+        for (let j = 0; j < arrayFrames[i].info.length; j++) {
+            $(`.coordSelectable:contains("${arrayFrames[i].info[j].coords}")`).attr('style', arrayFrames[i].info[j].style);
         }
+         
     }
+
+
+
+    /*for (let j = 0; j < currentFrame; j++) {        
+        for (let i = 0; i < arrayFrames[j].info.length; i++) 
+        arrayInfoCoords.push(arrayFrames[j].info[i]);
+
+        for (let i = 0; i < arrayCoordsObj.length; i++) {
+            if (arrayInfoCoords.some(e => e.coords === arrayCoordsObj[i].innerText)) {
+                arrayCoordsObj[i].style = arrayInfoCoords[arrayInfoCoords.findIndex(e => e.coords === arrayCoordsObj[i].innerText)].style;
+            } else {
+                arrayCoordsObj[i].removeAttribute('style');
+            }
+        }
+    }¡*/
+
+    
 }
 
-function updateFrame(event) {
-    let e = document.getElementById("frames-select");
+function printerPlayer(currentFrame) {
+
+    for (let j = 0; j < arrayFrames[currentFrame].info.length; j++) {
+            $(`.coordSelectable:contains("${arrayFrames[currentFrame].info[j].coords}")`).attr('style', arrayFrames[currentFrame].info[j].style);
+    }
+
+}
+
+function updateFrame() {
     let currentFrame = document.getElementById('frames-select').value;
     printer(currentFrame);
 }
+
 
 function changeFrameDuration() {
     let currentFrame = document.getElementById('frames-select').value;
@@ -345,67 +380,191 @@ function framePlayer() {
 
     console.log(arrayFrames.length);
 
+    reStyleAllCoords();
+
     player();
 }
 
 const timer = ms => new Promise(res => setTimeout(res, ms))
 
 async function player () { // We need to wrap the loop into an async function for this to work
-    for (let i = 0; i < arrayFrames.length; i++) {
-        document.getElementById('frames-select').getElementsByTagName('option')[i + 1].selected = 'selected';
-        printer(i + 1);
+    if(isPlaying) isPlaying = false;
+    else isPlaying = true;
 
-        let ticks = getTicks(i);
-        await timer(50 * ticks); // then the created Promise can be awaited
+    let frameVisualizer = document.getElementById('frames-select').getElementsByTagName('option');
+
+    for (let i = 0; i < arrayFrames.length; i++) {
+        if(!isPlaying) break;
+        frameVisualizer[i + 1].selected = 'selected';
+        await timer( 50 * getTicks(i)); // then the created Promise can be awaited
+        printerPlayer(i); 
     }
+
+    isPlaying = false;
 }
+
 
 function getTicks(i) {
     let ticks = 0;
 
-    if(!arrayFrames[i].duration) 
-        ticks = document.getElementById('default-duration').value;
-    else 
-        ticks = arrayFrames[i].duration;
-    
+    if(i === 0)
+        ticks = 0;
+    else {
+        if(!arrayFrames[i].duration) 
+            ticks = document.getElementById('default-duration').value;
+        else 
+            ticks = arrayFrames[i].duration;
+    }
+
     return ticks;
 }
 
-document.addEventListener('keydown', (event)=> {   
-    if(event.code === 'KeyA') {
-        document.getElementById('add-frame-button').click();
-    } else if(event.code === 'KeyD') {
-        document.getElementById('delete-frame-button').click();
-    }
+function reStyleAllCoords() {
+    for (let i = 0; i < arrayCoordsObj.length; i++) 
+        arrayCoordsObj[i].removeAttribute('style')  
+}
 
-    let selectFrame = document.getElementById('frames-select');
+async function rotateCanvas() {
+    let canvas = document.getElementById('myImage');
+    let currentDegrees = canvas.style.transform.match(/\d/g);
+    currentDegrees = parseInt(currentDegrees.join(""));
+
+    console.log(currentDegrees);
+
+    let newDegrees = 0;
+
+    newDegrees = currentDegrees + 90;
+
+    console.log(newDegrees);
+
+    const rotatePromise = new Promise((resolve, reject) => {
+        document.getElementById("myImage").animate([
+            // fotogramas clave
+            { transform: `rotate(${newDegrees}deg)` },
+          ], {
+            // opciones de sincronización
+            duration: 450,
+            easing: "ease-out"
+        })
+        resolve(newDegrees);
+    });
+    
+    rotatePromise.then((newDegrees) => {
+        setTimeout( ()=> {
+            canvas.style.transform = `rotate(${newDegrees}deg)`
+        }, 420); 
+    })
+
+}
+
+document.addEventListener('keydown', (event)=> {   
+
+    let inputText = document.getElementById("text-val");
+
+    if(inputText !== document.activeElement) {
+        if(event.code === 'KeyA') {
+            document.getElementById('add-frame-button').click();
+        } else if(event.code === 'KeyD') {
+            document.getElementById('delete-frame-button').click();
+        }
+    
+        if(event.code === 'KeyE') {
+            document.getElementById('player-frame-button').click();
+        }
+    
+        if(event.code === 'KeyQ') {
+            document.getElementById('rotate-button').click();
+        }
+    
+        let selectFrame = document.getElementById('frames-select');
+        let currentFrame = selectFrame.value;
+        
+        if(event.code === 'KeyW') {
+            if(currentFrame !== '1')
+               currentFrame--;
+    
+            selectFrame.value = currentFrame;
+            printer(currentFrame);
+        } else if(event.code === 'KeyS') {
+            console.log(currentFrame + ' - ' + arrayFrames.length);
+            if(currentFrame !== arrayFrames.length.toString()) 
+                currentFrame++;
+            
+            selectFrame.value = currentFrame;
+            printer(currentFrame);
+        }
+    
+        if(event.code === 'KeyG') {
+            saveData();
+        }
+    }
+        
 
     
-    if(event.code === 'KeyS') {
-        selectFrame.focus();
-
-        var keyboardEvent = document.createEvent('KeyboardEvent');
-        var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? 'initKeyboardEvent' : 'initKeyEvent';
-
-        keyboardEvent[initMethod](
-        'keydown', // event type: keydown, keyup, keypress
-        true, // bubbles
-        true, // cancelable
-        window, // view: should be window
-        false, // ctrlKey
-        false, // altKey
-        false, // shiftKey
-        false, // metaKey
-        40, // keyCode: unsigned long - the virtual key code, else 0
-        0, // charCode: unsigned long - the Unicode character associated with the depressed key, else 0
-        );
-        document.dispatchEvent(keyboardEvent);
-        
-    } else if(event.code === 'KeyW') {
-        selectFrame.focus();
-    }
 });
 
+function generateData() {
+
+}
+
+function calculateDuration(i, arrayFrames) {
+    let duration;
+
+    if(i === 0) {
+        duration = 2;
+    } else {
+        if(arrayFrames[i].duration === null) 
+            duration = parseInt(document.getElementById('default-duration').value);
+        else 
+            duration = parseInt(arrayFrames[i].duration);
+    }
+    
+    return duration;
+}
+
+function saveData() {
+    let arrayInfoTest = [];
+    let zip = new JSZip();
+
+    let nameAnimation = document.getElementById("text-val").value;
+    let fileContentAnimation = '';
+    let folderPath = `${nameAnimation}/`;
+    let duration = 0;
+
+    for (let i = 0; i < arrayFrames.length; i++) {
+        let fileName = `${i}`;
+        let fileContent = '';
+
+        duration += calculateDuration(i, arrayFrames); 
+        fileContentAnimation += `schedule function anim-lights:${folderPath}${fileName} ${duration}t\n`;
+
+        for (let j = 0; j < arrayFrames[i].info.length; j++) {
+            let coords1 = arrayFrames[i].info[j].coords.replace(/~/g,'62');
+            let coords2 = arrayFrames[i].info[j].coords.replace(/~/g,'61');
+            let coords3 = arrayFrames[i].info[j].coords.replace(/~/g,'60');
+
+            let block1 = arrayFrames[i].info[j].blocks[0];
+            let block2 = arrayFrames[i].info[j].blocks[1];
+            let block3 = arrayFrames[i].info[j].blocks[2];
+
+            fileContent += `setblock ${coords1} minecraft:${block1}\n`;
+            fileContent += `setblock ${coords2} minecraft:${block2}\n`;
+            fileContent += `setblock ${coords3} minecraft:${block3}\n`;
+        }
+
+        zip.file(`${folderPath}${fileName}.mcfunction`, fileContent); //Storing file with a content
+        
+    }
+
+    zip.file(`${folderPath}start.mcfunction`, fileContentAnimation);
+
+    zip.generateAsync({type:"blob"})
+        .then(function (blob) {
+            saveAs(blob, `${nameAnimation}.zip`);
+    });
+
+    console.log(arrayInfoTest);
+}
 
 let coordSelectablesObj = document.getElementsByClassName('coordSelectable');
 for (let i = 0; i < coordSelectablesObj.length; i++) 

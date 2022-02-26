@@ -13,7 +13,7 @@
 </style>
 <body>
     <div id="content-lights">
-        <div id="myImage">
+        <div id="myImage" style="transform: rotate(270deg);">
             <div class="left-behind1 outside coordSelectable">-97 ~ 133</div>
             <div class="left-behind2 outside coordSelectable">-105 ~ 135</div>
             <div class="left-behind3 outside coordSelectable">-113 ~ 137</div>
@@ -47,7 +47,7 @@
             <div class="forth-behind1 outside coordSelectable">-174 ~ 56</div>
             <div class="forth-behind2 outside coordSelectable">-176 ~ 64</div>
             <div class="forth-behind3 outside coordSelectable">-178 ~ 72</div>
-            <div class="forth-behind4 outside coordSelectable">-190 ~ 80</div>
+            <div class="forth-behind4 outside coordSelectable">-180 ~ 80</div>
             <div class="forth-behind5 outside coordSelectable">-182 ~ 91</div>
             <div class="forth-behind6 outside coordSelectable">-180 ~ 102</div>
             <div class="forth-behind7 outside coordSelectable">-178 ~ 110</div>
@@ -95,6 +95,10 @@
         <div id="commands-lights">
             <div id="center">
                 <div id="template">
+                    <div id="template-rotate">
+                        <div onclick="rotateCanvas()" id="rotate-button"><img id="rotate-icon" src="img/lights/rotate-icon.png" alt="A rotate icon"></div>
+                    </div> 
+
                     <div id="template-content">
                         <input type="radio" id="1" name="color" value="huey" checked>
                         <label class="label-color" for="1"><div class="template-child" style="background: url('img//lights/air.jpg'); background-size: contain;"></div></label>
@@ -111,6 +115,8 @@
                         <div id = "color-result" style="background-color: white;">air,air,air</div>
                         <div class="info-square"><input onclick="createNewPaintSelectable()" type="button" id="dwn-btn" value="Generate Light"/></div>
                     </div>      
+
+
 
                 </div>
 
@@ -167,7 +173,6 @@
                 </div>
     
                 <div id="info">
-                    <div class="info-square">Commands: <div id="amountOfCommands"></div></div>
                     <div class="info-square" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">---------------------</div>
                     <div class="info-square"><input type="text" id="text-val" placeholder="filename.mcfunction"/></div>
                     <div class="info-square"><input type="button" id="dwn-btn" value="Generate File"/></div>
@@ -183,4 +188,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.3.1/jquery.min.js">
 </script>
 <script src="js/event-light.js"></script>
+<script src="apis/jszip/dist/jszip.js"></script>
+<script src="apis/FileSaver/src/FileSaver.js"></script>
 </html>

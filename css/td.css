@@ -9,6 +9,12 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
+#colors:hover {
+    cursor: crosshair;
+}
+
+
+
 #command-input {
     width: 80%;
     height: 30px;
@@ -135,6 +141,34 @@ input[type=radio] {
     margin-bottom: 20px;
 }
 
+#template-rotate {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+#rotate-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    margin-bottom: 35px;
+    background-color:#249456;
+}
+
+#rotate-button:hover {
+    background-color:#cf9822;
+    cursor: pointer;
+}
+
+#rotate-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    margin-top: 5px;
+    height: 35px;
+    filter: brightness(0) invert(1);
+}
+
 #frame-duration {
     margin-top: 5px;
     margin-bottom: 20px;
@@ -156,11 +190,13 @@ input[type=radio] {
 }
 
 #commands-lights {
+    position: absolute;
     float: right;
     width: 400px;
     height: 500px;
     max-height: 600px;
-    margin-top: 10%;
+    margin-top: 5%;
+    margin-right: 30px;
     right: 15%;
 }
 

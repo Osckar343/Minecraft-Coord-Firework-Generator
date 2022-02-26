@@ -247,7 +247,7 @@ inputCommand.addEventListener("keyup", getCommandFromInput, false);
 
 
   // Start file download.
-document.getElementById("dwn-btn").addEventListener("click", function(){
+document.getElementById("dwn-btn").addEventListener("click", function() {
     // Generate download of hello.txt file with some content
     let customFileName = document.getElementById("text-val").value + '.mcfunction';
     let filename = "firework.mcfunction";

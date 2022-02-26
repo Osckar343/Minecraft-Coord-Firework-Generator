@@ -7,8 +7,7 @@
     float: left;
     position:relative; width:1400px; height:1400px;
     background-image:url("../img/lights/BaseStructure.png");
-    background-size: contain;
-    transform: rotate(270deg); 
+    background-size: contain; 
   }
 
 #myImage div {
@@ -47,10 +46,17 @@
 
 #add-frame-button:hover {
   background-color: orange;
+  cursor: pointer;
 }
 
 #delete-frame-button:hover {
   background-color: orange;
+  cursor: pointer;
+}
+
+#player-frame-button:hover {
+  background-color: orange;
+  cursor: pointer;
 }
 
 .coordSelectable {
